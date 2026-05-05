@@ -1,0 +1,6 @@
+1,admin,admin123,admin@sweetbite.lk,0112345678,STAFF,Manager,85000.0
+2,baker01,baker123,baker@sweetbite.lk,0113456789,STAFF,Head Baker,55000.0
+3,john,john123,john@example.com,0771234567,CUSTOMER,45 Main St, Colombo,120
+4,sarah,sarah123,sarah@example.com,0779876543,CUSTOMER,12 Park Rd, Kandy,80
+5,priya,priya123,priya@example.com,0762345678,CUSTOMER,78 Lake View, Galle,0
+6,Dasun,123,dulsharadasun@gmai.com,0714911222,CUSTOMER,,0
