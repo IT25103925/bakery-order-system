@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="navbar">
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">🍰 Sweet<span>Bite</span> Bakery</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item" th:if="${session.userId != null}">
+          <a class="nav-link" th:href="@{/products}">🛒 Products</a>
+        </li>
+        <li class="nav-item" th:if="${session.userId != null}">
+          <a class="nav-link" th:href="@{/cakes/request}">🎂 Custom Cakes</a>
+        </li>
+        <li class="nav-item" th:if="${session.userId != null}">
+          <a class="nav-link" th:href="@{/orders/history}">📦 My Orders</a>
+        </li>
+        <li class="nav-item dropdown" th:if="${session.userRole == 'STAFF'}">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">⚙️ Admin</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/products/manage}">Product Catalog</a></li>
+            <li><a class="dropdown-item" th:href="@{/orders/admin/all}">All Orders</a></li>
+            <li><a class="dropdown-item" th:href="@{/cakes/admin}">Cake Bookings</a></li>
+            <li><a class="dropdown-item" th:href="@{/inventory/suppliers}">Suppliers</a></li>
+            <li><a class="dropdown-item" th:href="@{/inventory/dashboard}">Inventory</a></li>
+            <li><a class="dropdown-item" th:href="@{/reviews/admin}">Review Moderation</a></li>
+            <li><a class="dropdown-item" th:href="@{/users/admin/list}">Manage Users</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item" th:if="${session.userId != null}">
+          <a class="nav-link" th:href="@{/users/profile}">👤 <span th:text="${session.username}">User</span></a>
+        </li>
+        <li class="nav-item" th:if="${session.userId != null}">
+          <a class="nav-link" th:href="@{/logout}">🚪 Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+</html>
