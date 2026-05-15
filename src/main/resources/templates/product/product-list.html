@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Products - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="bakery-hero py-3">
+    <h2>🛒 Our Products</h2>
+    <p>Fresh from the oven, every day</p>
+  </div>
+  <div class="container mt-4">
+    <form th:action="@{/products}" method="get" class="mb-4 d-flex gap-2">
+      <input type="text" name="search" class="form-control" placeholder="Search products..." th:value="${search}">
+      <button class="btn btn-primary px-4">Search</button>
+      <a th:href="@{/products}" class="btn btn-outline-secondary">Clear</a>
+    </form>
+    <div class="row g-4">
+      <div class="col-md-4 col-sm-6" th:each="p : ${products}">
+        <div class="card product-card h-100">
+          <div class="product-img-placeholder">
+            <span th:text="${p.category == 'BREAD' ? '🍞' : p.category == 'PASTRY' ? '🥐' : p.category == 'CAKE' ? '🎂' : p.category == 'COOKIE' ? '🍪' : '🧁'}">🧁</span>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between">
+              <h6 class="card-title fw-bold" th:text="${p.name}">Product Name</h6>
+              <span class="badge bg-secondary" th:text="${p.type}">TYPE</span>
+            </div>
+            <p class="card-text text-muted small flex-grow-1" th:text="${p.description}">Desc</p>
+            <p class="fw-bold text-danger mb-2" th:text="${p.displayPrice}">Rs. 0.00</p>
+            <p class="small text-muted mb-2">Stock: <span th:text="${p.stockQuantity}">0</span> left</p>
+            <div class="d-flex gap-2">
+              <a th:href="@{/products/{id}(id=${p.id})}" class="btn btn-outline-primary btn-sm flex-grow-1">View</a>
+              <form th:action="@{/orders/cart/add}" method="post" class="flex-grow-1">
+                <input type="hidden" name="productId" th:value="${p.id}">
+                <input type="hidden" name="quantity" value="1">
+                <button class="btn btn-primary btn-sm w-100" th:disabled="${!p.available}">Add to Cart</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(products)}">
+        <p class="text-muted fs-5">No products found.</p>
+        <a th:href="@{/products}" class="btn btn-primary">View All Products</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
