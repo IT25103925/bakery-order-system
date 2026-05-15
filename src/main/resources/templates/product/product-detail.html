@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Product Detail - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="container mt-4">
+    <a th:href="@{/products}" class="btn btn-outline-secondary mb-3">&larr; Back to Products</a>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <div style="font-size:5rem" th:text="${product.category == 'BREAD' ? '🍞' : product.category == 'PASTRY' ? '🥐' : product.category == 'CAKE' ? '🎂' : product.category == 'COOKIE' ? '🍪' : '🧁'}">🧁</div>
+          <h4 class="fw-bold mt-2" th:text="${product.name}">Name</h4>
+          <p class="fs-4 text-danger fw-bold" th:text="${product.displayPrice}">Price</p>
+          <span class="badge bg-secondary mb-2" th:text="${product.type}">TYPE</span>
+          <span class="badge bg-success mb-3" th:if="${product.available}">In Stock (<span th:text="${product.stockQuantity}"></span>)</span>
+          <span class="badge bg-danger mb-3" th:unless="${product.available}">Out of Stock</span>
+          <form th:action="@{/orders/cart/add}" method="post">
+            <input type="hidden" name="productId" th:value="${product.id}">
+            <div class="mb-2"><input type="number" name="quantity" class="form-control text-center" value="1" min="1" th:max="${product.stockQuantity}"></div>
+            <button class="btn btn-primary w-100 fw-bold" th:disabled="${!product.available}">🛒 Add to Cart</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card p-4 mb-3">
+          <h5 class="fw-bold">Product Description</h5>
+          <p th:text="${product.description}">Description</p>
+          <p><strong>Category:</strong> <span th:text="${product.category}"></span></p>
+        </div>
+        <div class="card p-4 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0">Customer Reviews</h5>
+            <span class="stars fs-5">★</span> <span th:text="${#numbers.formatDecimal(avgRating,1,1)}">0.0</span>/5
+          </div>
+          <div th:each="r : ${reviews}" class="border-bottom pb-2 mb-2">
+            <div class="d-flex justify-content-between">
+              <span class="fw-semibold" th:text="${r.maskedUsername}">User</span>
+              <span class="stars" th:text="${'★'.repeat(r.rating) + '☆'.repeat(5-r.rating)}">★★★★★</span>
+            </div>
+            <p class="mb-0 small text-muted" th:text="${r.comment}">Comment</p>
+            <small class="text-muted" th:text="${r.reviewDate}"></small>
+            <span class="badge bg-success ms-1" th:if="${r.reviewType == 'VERIFIED'}">Verified Purchase</span>
+          </div>
+          <div th:if="${#lists.isEmpty(reviews)}" class="text-muted">No reviews yet.</div>
+          <a th:href="@{/reviews/submit/{id}(id=${product.id})}" class="btn btn-outline-primary mt-2">Write a Review</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
