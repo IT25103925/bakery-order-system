@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Custom Cake Booking - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="bakery-hero py-3">
+    <h2>🎂 Custom Cake Booking</h2>
+    <p>Birthday cakes, wedding cakes &amp; more — made just for you</p>
+  </div>
+  <div class="container mt-4">
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <ul class="nav nav-tabs mb-4" id="cakeTabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#birthday">🎈 Birthday Cake</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#wedding">💍 Wedding Cake</a></li>
+    </ul>
+    <div class="tab-content">
+      <!-- Birthday Cake Form -->
+      <div class="tab-pane fade show active" id="birthday">
+        <div class="card p-4" style="max-width:600px;">
+          <h5 class="fw-bold mb-3">Birthday Cake Request</h5>
+          <form th:action="@{/cakes/request/birthday}" method="post">
+            <div class="row">
+              <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Flavor</label>
+                <select name="flavor" class="form-select">
+                  <option>Chocolate</option><option>Vanilla</option><option>Red Velvet</option>
+                  <option>Strawberry</option><option>Lemon</option><option>Caramel</option>
+                </select></div>
+              <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Number of Tiers</label>
+                <select name="tiers" class="form-select">
+                  <option value="1">1 Tier</option><option value="2">2 Tiers</option><option value="3">3 Tiers</option>
+                </select></div>
+            </div>
+            <div class="mb-3"><label class="form-label fw-semibold">Theme</label>
+              <input type="text" name="theme" class="form-control" placeholder="e.g. Unicorn, Superhero, Floral"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Age Decoration</label>
+              <input type="text" name="ageDecoration" class="form-control" placeholder="e.g. 5, 18, 21"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Message on Cake</label>
+              <input type="text" name="message" class="form-control" placeholder="Happy Birthday John!"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Delivery Date</label>
+              <input type="date" name="deliveryDate" class="form-control" required></div>
+            <button type="submit" class="btn btn-primary fw-bold">🎂 Submit Birthday Booking</button>
+          </form>
+        </div>
+      </div>
+      <!-- Wedding Cake Form -->
+      <div class="tab-pane fade" id="wedding">
+        <div class="card p-4" style="max-width:600px;">
+          <h5 class="fw-bold mb-3">Wedding Cake Request</h5>
+          <form th:action="@{/cakes/request/wedding}" method="post">
+            <div class="row">
+              <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Flavor</label>
+                <select name="flavor" class="form-select">
+                  <option>Vanilla</option><option>Chocolate</option><option>Fruitcake</option>
+                  <option>Almond</option><option>Rose</option>
+                </select></div>
+              <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Number of Tiers</label>
+                <select name="tiers" class="form-select">
+                  <option value="2">2 Tiers</option><option value="3">3 Tiers</option>
+                  <option value="4">4 Tiers</option><option value="5">5 Tiers</option>
+                </select></div>
+            </div>
+            <div class="mb-3"><label class="form-label fw-semibold">Couple's Names</label>
+              <input type="text" name="couplesNames" class="form-control" placeholder="John &amp; Jane"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Frosting Style</label>
+              <select name="frostingStyle" class="form-select">
+                <option>Buttercream</option><option>Fondant</option><option>Whipped Cream</option><option>Naked Cake</option>
+              </select></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Message on Cake</label>
+              <input type="text" name="message" class="form-control" placeholder="Forever &amp; Always"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Wedding Date</label>
+              <input type="date" name="deliveryDate" class="form-control" required></div>
+            <button type="submit" class="btn btn-primary fw-bold">💍 Submit Wedding Booking</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
