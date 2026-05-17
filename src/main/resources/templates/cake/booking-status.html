@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>My Cake Bookings - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="container mt-4">
+    <h3 class="fw-bold mb-3">🎂 My Cake Bookings</h3>
+    <div th:if="${#lists.isEmpty(bookings)}" class="card p-5 text-center">
+      <p class="text-muted">No cake bookings yet.</p>
+      <a th:href="@{/cakes/request}" class="btn btn-primary">Book a Custom Cake</a>
+    </div>
+    <div class="row g-3" th:unless="${#lists.isEmpty(bookings)}">
+      <div class="col-md-6" th:each="c : ${bookings}">
+        <div class="card p-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <h6 class="fw-bold" th:text="'#' + ${c.id} + ' - ' + ${c.cakeType} + ' Cake'"></h6>
+            <span class="badge" th:classappend="'badge-status-' + ${c.status}" th:text="${c.status}"></span>
+          </div>
+          <p class="mb-1 small"><strong>Flavor:</strong> <span th:text="${c.flavor}"></span></p>
+          <p class="mb-1 small"><strong>Tiers:</strong> <span th:text="${c.tiers}"></span></p>
+          <p class="mb-1 small"><strong>Message:</strong> <span th:text="${c.message}"></span></p>
+          <p class="mb-1 small"><strong>Delivery:</strong> <span th:text="${c.deliveryDate}"></span></p>
+          <p class="mb-2 fw-semibold text-danger">Rs. <span th:text="${#numbers.formatDecimal(c.price,1,2)}"></span></p>
+          <div class="d-flex gap-2" th:if="${c.status.name() == 'SUBMITTED'}">
+            <a th:href="@{/cakes/edit/{id}(id=${c.id})}" class="btn btn-sm btn-warning">Edit</a>
+            <form th:action="@{/cakes/cancel/{id}(id=${c.id})}" method="post" onsubmit="return confirm('Cancel this booking?')">
+              <button class="btn btn-sm btn-outline-danger">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
