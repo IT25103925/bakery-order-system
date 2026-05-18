@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>User Management - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="fw-bold">👥 User Management</h3>
+      <a th:href="@{/users/admin/register-staff}" class="btn btn-primary">+ Add Staff</a>
+    </div>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark"><tr>
+            <th>ID</th><th>Username</th><th>Email</th><th>Phone</th><th>Role</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr th:each="u : ${users}">
+              <td th:text="${u.id}"></td>
+              <td th:text="${u.username}"></td>
+              <td th:text="${u.email}"></td>
+              <td th:text="${u.phone}"></td>
+              <td><span class="badge" th:classappend="${u.role == 'STAFF'} ? 'bg-danger' : 'bg-primary'" th:text="${u.role}"></span></td>
+              <td>
+                <form th:action="@{/users/admin/delete/{id}(id=${u.id})}" method="post" onsubmit="return confirm('Delete this user?')">
+                  <button class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
