@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Register Staff - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="container mt-4" style="max-width:500px;">
+    <h3 class="fw-bold mb-3">➕ Register New Staff</h3>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div class="card p-4">
+      <form th:action="@{/users/admin/register-staff}" method="post">
+        <div class="mb-3"><label class="form-label fw-semibold">Username</label>
+          <input type="text" name="username" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Password</label>
+          <input type="password" name="password" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Email</label>
+          <input type="email" name="email" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Phone</label>
+          <input type="text" name="phone" class="form-control"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Position</label>
+          <input type="text" name="position" class="form-control" placeholder="e.g. Baker, Manager"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Salary (Rs.)</label>
+          <input type="number" name="salary" class="form-control" value="35000"></div>
+        <button type="submit" class="btn btn-primary fw-bold">Register Staff</button>
+        <a th:href="@{/users/admin/list}" class="btn btn-secondary ms-2">Back</a>
+      </form>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
