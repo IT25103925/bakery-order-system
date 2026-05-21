@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * PersonService - Business logic for Member 01: Person & Profile Management.
- * OOP: Uses Inheritance (Customer/Admin extend Person), Encapsulation.
- */
+
 @Service
 public class PersonService {
 
@@ -64,6 +61,14 @@ public class PersonService {
         List<Person> persons = getAllPersons();
         for (Person p : persons) {
             if (p.getUsername().equalsIgnoreCase(username)) return p;
+        }
+        return null;
+    }
+
+    public Person findByEmail(String email) {
+        List<Person> persons = getAllPersons();
+        for (Person p : persons) {
+            if (p.getEmail().equalsIgnoreCase(email)) return p;
         }
         return null;
     }
