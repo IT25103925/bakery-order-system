@@ -21,10 +21,14 @@ public class AuthController {
 
     // ── CUSTOMER LOGIN ─────────────────────────────────────────────────────────
     @GetMapping("/customer-login")
-    public String customerLoginPage(HttpSession session) {
+    public String customerLoginPage(HttpSession session, Model model,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String registered) {
         if (session.getAttribute("userId") != null &&
                 "CUSTOMER".equals(session.getAttribute("userRole"))) {
             return "redirect:/customer/dashboard";
+        }
+        if ("true".equals(registered)) {
+            model.addAttribute("success", "Registration successful! Please login.");
         }
         return "auth/customer-login";
     }
@@ -82,13 +86,20 @@ public class AuthController {
             @RequestParam String phone,
             @RequestParam String address,
             Model model) {
-        boolean success = personService.registerCustomer(username, password, email, phone, address);
-        if (!success) {
+        if (personService.findByUsername(username) != null) {
             model.addAttribute("error", "Username already exists.");
             return "auth/register";
         }
-        model.addAttribute("success", "Registration successful! Please login.");
-        return "auth/customer-login";
+        if (personService.findByEmail(email) != null) {
+            model.addAttribute("error", "An account with this email already exists.");
+            return "auth/register";
+        }
+        boolean success = personService.registerCustomer(username, password, email, phone, address);
+        if (!success) {
+            model.addAttribute("error", "Registration failed. Please try again.");
+            return "auth/register";
+        }
+        return "redirect:/customer-login?registered=true";
     }
 
     // ── LOGOUT ─────────────────────────────────────────────────────────────────
