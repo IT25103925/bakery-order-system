@@ -33,16 +33,30 @@ public class NonPerishableProduct extends Product {
 
     public static NonPerishableProduct fromLine(String line) {
         String[] p = line.split(",", -1);
+        // Format: id, name, desc(may have commas), price, qty, category, TYPE, available, shelfLife, bulkDiscount
+        // Read fixed fields from the END to handle commas in description
         if (p.length < 8) return null;
         try {
+            int last = p.length - 1;
+            boolean bulkDiscount = Boolean.parseBoolean(p[last].trim());
+            int shelfLife = Integer.parseInt(p[last - 1].trim());
+            // available = p[last-2], TYPE = p[last-3], category = p[last-4]
+            String category = p[last - 4].trim();
+            int qty = Integer.parseInt(p[last - 5].trim());
+            double price = Double.parseDouble(p[last - 6].trim());
+            // description = everything between index 2 and last-7 (inclusive)
+            StringBuilder desc = new StringBuilder();
+            for (int i = 2; i <= last - 7; i++) {
+                if (i > 2) desc.append(",");
+                desc.append(p[i]);
+            }
             NonPerishableProduct prod = new NonPerishableProduct(
-                Integer.parseInt(p[0].trim()), p[1].trim(), p[2].trim(),
-                Double.parseDouble(p[3].trim()), Integer.parseInt(p[4].trim()),
-                p[5].trim(), p.length > 8 ? Integer.parseInt(p[8].trim()) : 30
+                Integer.parseInt(p[0].trim()), p[1].trim(), desc.toString().trim(),
+                price, qty, category, shelfLife
             );
-            if (p.length > 9) prod.setBulkDiscountEligible(Boolean.parseBoolean(p[9].trim()));
+            prod.setBulkDiscountEligible(bulkDiscount);
             return prod;
-        } catch (NumberFormatException e) { return null; }
+        } catch (Exception e) { return null; }
     }
 
     public int getShelfLifeDays() { return shelfLifeDays; }
