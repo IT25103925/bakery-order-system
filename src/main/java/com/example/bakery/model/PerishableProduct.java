@@ -34,16 +34,29 @@ public class PerishableProduct extends Product {
 
     public static PerishableProduct fromLine(String line) {
         String[] p = line.split(",", -1);
-        if (p.length < 9) return null;
+        // Format: id, name, desc(may have commas), price, qty, category, TYPE, available, expiryDate, discountRate
+        if (p.length < 8) return null;
         try {
+            int last = p.length - 1;
+            double discountRate = Double.parseDouble(p[last].trim());
+            String expiry = p[last - 1].trim();
+            // available = p[last-2], TYPE = p[last-3], category = p[last-4]
+            String category = p[last - 4].trim();
+            int qty = Integer.parseInt(p[last - 5].trim());
+            double price = Double.parseDouble(p[last - 6].trim());
+            // description = everything between index 2 and last-7 (inclusive)
+            StringBuilder desc = new StringBuilder();
+            for (int i = 2; i <= last - 7; i++) {
+                if (i > 2) desc.append(",");
+                desc.append(p[i]);
+            }
             PerishableProduct prod = new PerishableProduct(
-                Integer.parseInt(p[0].trim()), p[1].trim(), p[2].trim(),
-                Double.parseDouble(p[3].trim()), Integer.parseInt(p[4].trim()),
-                p[5].trim(), p.length > 8 ? p[8].trim() : ""
+                Integer.parseInt(p[0].trim()), p[1].trim(), desc.toString().trim(),
+                price, qty, category, expiry
             );
-            if (p.length > 9) prod.setDiscountRate(Double.parseDouble(p[9].trim()));
+            prod.setDiscountRate(discountRate);
             return prod;
-        } catch (NumberFormatException e) { return null; }
+        } catch (Exception e) { return null; }
     }
 
     public String getExpiryDate() { return expiryDate; }
