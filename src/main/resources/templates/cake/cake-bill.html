@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Bill - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <style>
+    .bill-card { border-radius: 16px; border: none; box-shadow: 0 4px 24px rgba(0,0,0,0.10); overflow: hidden; }
+    .bill-header { background: linear-gradient(135deg, #c0392b 0%, #96281b 100%); color: white; padding: 28px 32px; }
+    .bill-header h3 { font-weight: 700; font-size: 1.5rem; margin: 0; }
+    .bill-body { padding: 28px 32px; background: #fff; }
+    .bill-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e9ecef; font-size: 0.97rem; }
+    .bill-row:last-child { border-bottom: none; }
+    .bill-label { color: #888; }
+    .bill-value { font-weight: 600; color: #2c3e50; }
+    .total-row { background: #fff8f0; border-radius: 10px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .total-label { font-size: 1.1rem; font-weight: 700; color: #2c3e50; }
+    .total-amount { font-size: 1.6rem; font-weight: 800; color: #c0392b; }
+    .payment-option { border: 2px solid #e9ecef; border-radius: 12px; padding: 18px 20px; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
+    .payment-option:hover { border-color: #c0392b; background: #fff8f0; }
+    .payment-option input[type=radio]:checked + .payment-content { color: #c0392b; }
+    .payment-option.selected { border-color: #c0392b; background: #fff3f0; }
+    .payment-option .pay-icon { font-size: 2rem; margin-right: 14px; }
+    .pay-title { font-weight: 700; font-size: 1rem; color: #2c3e50; }
+    .pay-desc { font-size: 0.85rem; color: #888; }
+    .card-fields { display: none; margin-top: 14px; }
+    .btn-confirm { background: #c0392b; border: none; color: white; font-weight: 700; font-size: 1.1rem; padding: 14px; border-radius: 10px; width: 100%; transition: background 0.2s; }
+    .btn-confirm:hover { background: #96281b; }
+    .bakery-logo-small { font-size: 1.1rem; font-weight: 700; opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+
+  <div class="bakery-hero py-3">
+    <h2>🧾 Booking Bill & Payment</h2>
+    <p>Review your order details and choose how to pay</p>
+  </div>
+
+  <div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+
+        <!-- Bill Card -->
+        <div class="bill-card mb-4">
+          <div class="bill-header">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="bakery-logo-small">🎂 SweetBite Bakery</div>
+                <h3 class="mt-1" th:text="'Booking #' + ${cake.id}">Booking #001</h3>
+              </div>
+              <div class="text-end">
+                <div style="font-size:0.85rem;opacity:0.8;">Booking Date</div>
+                <div style="font-weight:600;" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}">17 May 2025</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-body">
+            <div class="bill-row">
+              <span class="bill-label">Customer</span>
+              <span class="bill-value" th:text="${cake.customerName}">John Doe</span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label">Cake Type</span>
+              <span class="bill-value">
+                <span th:if="${cake.cakeType == 'WEDDING'}">💍 Wedding Cake</span>
+                <span th:if="${cake.cakeType == 'BIRTHDAY'}">🎈 Birthday Cake</span>
+              </span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label">Flavor</span>
+              <span class="bill-value" th:text="${cake.flavor}">Vanilla</span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label">Tiers</span>
+              <span class="bill-value" th:text="${cake.tiers} + ' tier(s)'">3 tier(s)</span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label">Message</span>
+              <span class="bill-value" th:text="${cake.message}">Forever & Always</span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label">Delivery Date</span>
+              <span class="bill-value" th:text="${cake.deliveryDate}">2025-06-15</span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label">Status</span>
+              <span class="badge bg-warning text-dark">SUBMITTED</span>
+            </div>
+
+            <!-- Pricing breakdown -->
+            <div class="mt-3 mb-2" style="font-size:0.85rem;color:#888;font-weight:600;">PRICE BREAKDOWN</div>
+            <div class="bill-row">
+              <span class="bill-label" th:if="${cake.cakeType == 'WEDDING'}">Base (wedding premium)</span>
+              <span class="bill-label" th:if="${cake.cakeType == 'BIRTHDAY'}">Base price</span>
+              <span class="bill-value" th:if="${cake.cakeType == 'WEDDING'}" th:text="'Rs. ' + ${#numbers.formatDecimal(2000, 1, 'COMMA', 2, 'POINT')}">Rs. 2,000.00</span>
+              <span class="bill-value" th:if="${cake.cakeType == 'BIRTHDAY'}" th:text="'Rs. ' + ${#numbers.formatDecimal(500, 1, 'COMMA', 2, 'POINT')}">Rs. 500.00</span>
+            </div>
+            <div class="bill-row">
+              <span class="bill-label" th:text="${cake.tiers} + ' tiers × Rs. ' + (${cake.cakeType == 'WEDDING'} ? '3,000' : '1,500')">Tiers</span>
+              <span class="bill-value" th:if="${cake.cakeType == 'WEDDING'}" th:text="'Rs. ' + ${#numbers.formatDecimal(cake.tiers * 3000, 1, 'COMMA', 2, 'POINT')}"></span>
+              <span class="bill-value" th:if="${cake.cakeType == 'BIRTHDAY'}" th:text="'Rs. ' + ${#numbers.formatDecimal(cake.tiers * 1500, 1, 'COMMA', 2, 'POINT')}"></span>
+            </div>
+
+            <div class="total-row mt-3">
+              <span class="total-label">Total Amount</span>
+              <span class="total-amount" th:text="'Rs. ' + ${#numbers.formatDecimal(cake.price, 1, 'COMMA', 2, 'POINT')}">Rs. 11,000.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="card p-4 mb-4">
+          <h5 class="fw-bold mb-3">💳 Choose Payment Method</h5>
+          <form th:action="@{/cakes/payment}" method="post">
+            <input type="hidden" name="cakeId" th:value="${cake.id}">
+
+            <!-- Card Payment -->
+            <label class="payment-option d-flex align-items-start w-100" id="cardOption">
+              <input type="radio" name="paymentMethod" value="ONLINE_SIMULATION" class="mt-1 me-3" onchange="toggleCardFields(this)" required>
+              <div>
+                <div class="d-flex align-items-center">
+                  <span class="pay-icon">💳</span>
+                  <div>
+                    <div class="pay-title">Card Payment</div>
+                    <div class="pay-desc">Pay now securely with your debit/credit card</div>
+                  </div>
+                </div>
+                <div class="card-fields mt-3" id="cardFields">
+                  <div class="mb-2">
+                    <label class="form-label fw-semibold" style="font-size:0.9rem;">Cardholder Name</label>
+                    <input type="text" name="cardName" class="form-control form-control-sm" placeholder="John Silva">
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label fw-semibold" style="font-size:0.9rem;">Card Number</label>
+                    <input type="text" name="cardNumber" class="form-control form-control-sm" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+                  </div>
+                  <div class="row">
+                    <div class="col-6 mb-2">
+                      <label class="form-label fw-semibold" style="font-size:0.9rem;">Expiry</label>
+                      <input type="text" name="expiry" class="form-control form-control-sm" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="col-6 mb-2">
+                      <label class="form-label fw-semibold" style="font-size:0.9rem;">CVV</label>
+                      <input type="text" name="cvv" class="form-control form-control-sm" placeholder="123" maxlength="3">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <!-- Cash on Pickup -->
+            <label class="payment-option d-flex align-items-center w-100" id="cashOption">
+              <input type="radio" name="paymentMethod" value="CASH_ON_PICKUP" class="me-3" onchange="toggleCardFields(this)">
+              <span class="pay-icon">🏪</span>
+              <div>
+                <div class="pay-title">Cash on Pick-Up</div>
+                <div class="pay-desc">Pay when you collect your cake from our bakery</div>
+              </div>
+            </label>
+
+            <button type="submit" class="btn-confirm mt-3">Confirm Booking & Pay →</button>
+          </form>
+        </div>
+
+        <a th:href="@{/cakes/request}" class="btn btn-outline-secondary w-100">← Back to Booking</a>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleCardFields(radio) {
+      const cardFields = document.getElementById('cardFields');
+      if (radio.value === 'ONLINE_SIMULATION') {
+        cardFields.style.display = 'block';
+      } else {
+        cardFields.style.display = 'none';
+      }
+    }
+
+    function formatCard(input) {
+      let val = input.value.replace(/\D/g, '').substring(0, 16);
+      input.value = val.replace(/(.{4})/g, '$1 ').trim();
+    }
+
+    // Highlight selected option
+    document.querySelectorAll('.payment-option input[type=radio]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+        this.closest('.payment-option').classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>
