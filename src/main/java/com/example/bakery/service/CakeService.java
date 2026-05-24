@@ -49,7 +49,7 @@ public class CakeService {
             List<String> lines = fileStorage.readAll(FILE);
             int newId = FileStorage.generateId(lines);
             BirthdayCake cake = new BirthdayCake(newId, customerId, customerName, flavor,
-                    tiers, message, deliveryDate, theme, ageDecoration);
+                    tiers, message, deliveryDate, theme, ageDecoration, 1.0);
             fileStorage.appendLine(FILE, cake.toString());
             return true;
         } catch (Exception e) { return false; }
@@ -62,7 +62,7 @@ public class CakeService {
             List<String> lines = fileStorage.readAll(FILE);
             int newId = FileStorage.generateId(lines);
             WeddingCake cake = new WeddingCake(newId, customerId, customerName, flavor,
-                    tiers, message, deliveryDate, couplesNames, frostingStyle);
+                    tiers, message, deliveryDate, couplesNames, frostingStyle, 4.0);
             fileStorage.appendLine(FILE, cake.toString());
             return true;
         } catch (Exception e) { return false; }
@@ -121,4 +121,62 @@ public class CakeService {
         if (found) fileStorage.writeAll(FILE, updated);
         return found;
     }
+
+    /** Submit birthday booking and return the new cake ID  */
+    public int submitBirthdayBookingGetId(int customerId, String customerName, String flavor,
+                                           int tiers, String message, String deliveryDate,
+                                           String theme, String ageDecoration, double weightKg) {
+        try {
+            List<String> lines = fileStorage.readAll(FILE);
+            int newId = FileStorage.generateId(lines);
+            BirthdayCake cake = new BirthdayCake(newId, customerId, customerName, flavor,
+                    tiers, message, deliveryDate, theme, ageDecoration, weightKg);
+            fileStorage.appendLine(FILE, cake.toString());
+            return newId;
+        } catch (Exception e) { return -1; }
+    }
+
+    /** Submit wedding booking and return the new cake ID  */
+    public int submitWeddingBookingGetId(int customerId, String customerName, String flavor,
+                                          int tiers, String message, String deliveryDate,
+                                          String couplesNames, String frostingStyle, double weightKg) {
+        try {
+            List<String> lines = fileStorage.readAll(FILE);
+            int newId = FileStorage.generateId(lines);
+            WeddingCake cake = new WeddingCake(newId, customerId, customerName, flavor,
+                    tiers, message, deliveryDate, couplesNames, frostingStyle, weightKg);
+            fileStorage.appendLine(FILE, cake.toString());
+            return newId;
+        } catch (Exception e) { return -1; }
+    }
+
+    /** Save payment method to a cake booking  */
+    public boolean savePaymentMethod(int cakeId, String paymentMethod) {
+        List<String> lines = fileStorage.readAll(FILE);
+        List<String> updated = new ArrayList<>();
+        boolean found = false;
+        for (String line : lines) {
+            String[] parts = line.split(",", -1);
+            if (parts.length > 0 && parts[0].trim().equals(String.valueOf(cakeId))) {
+                // Store payment method in index 11 
+                if (parts.length <= 11) {
+                    // Pad if needed
+                    while (parts.length < 12) {
+                        String[] tmp = new String[parts.length + 1];
+                        System.arraycopy(parts, 0, tmp, 0, parts.length);
+                        tmp[parts.length] = "";
+                        parts = tmp;
+                    }
+                }
+                parts[11] = paymentMethod;
+                updated.add(String.join(",", parts));
+                found = true;
+            } else {
+                updated.add(line);
+            }
+        }
+        if (found) fileStorage.writeAll(FILE, updated);
+        return found;
+    }
+
 }
