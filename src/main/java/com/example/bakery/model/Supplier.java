@@ -1,6 +1,5 @@
 package com.example.bakery.model;
 
-
 public abstract class Supplier extends BaseEntity {
 
     private String name;
@@ -8,9 +7,7 @@ public abstract class Supplier extends BaseEntity {
     private String phone;
     private String address;
 
-    public Supplier() {
-        super();
-    }
+    public Supplier() { super(); }
 
     public Supplier(int id, String name, String contactEmail, String phone, String address) {
         super(id);
@@ -20,8 +17,8 @@ public abstract class Supplier extends BaseEntity {
         this.address = address;
     }
 
-
     public abstract String getSupplierType();
+
     public abstract double getDiscountRate();
 
     @Override
@@ -31,17 +28,17 @@ public abstract class Supplier extends BaseEntity {
 
     public static Supplier fromLine(String line) {
         String[] p = line.split(",", -1);
-        if (p.length < 6)
-            return null;
-        String type = p[5].trim();
+        if (p.length < 6) return null;
 
-        if ("LOCAL".equals(type)) {
-            return LocalSupplier.fromLine(line);
-        } else {
-            return WholesaleSupplier.fromLine(line);
-        }
+        String secondLast = p[p.length - 2].trim();
+        if ("LOCAL".equals(secondLast)) return LocalSupplier.fromLine(line);
+        if ("WHOLESALE".equals(secondLast)) return WholesaleSupplier.fromLine(line);
+
+
+        String last = p[p.length - 1].trim();
+        if ("LOCAL".equals(last)) return LocalSupplier.fromLine(line);
+        return WholesaleSupplier.fromLine(line);
     }
-
 
     public String getName() {
         return name;
