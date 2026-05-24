@@ -7,17 +7,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InventoryService {
 
     private static final String SUPPLIERS_FILE = "suppliers.txt";
     private static final String INGREDIENTS_FILE = "ingredients.txt";
+    private static final String PURCHASE_ORDERS_FILE = "purchase_orders.txt";
 
     @Autowired
     private FileStorage fileStorage;
 
-    //  SUPPLIER METHODS
+    // SUPPLIER METHODS
 
     public List<Supplier> getAllSuppliers() {
         List<String> lines = fileStorage.readAll(SUPPLIERS_FILE);
@@ -43,7 +45,9 @@ public class InventoryService {
             LocalSupplier s = new LocalSupplier(newId, name, email, phone, address, locality);
             fileStorage.appendLine(SUPPLIERS_FILE, s.toString());
             return true;
-        } catch (Exception e) { return false; }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean addWholesaleSupplier(String name, String email, String phone, String address, int moq) {
@@ -57,16 +61,11 @@ public class InventoryService {
     }
 
     public boolean updateSupplierContact(int id, String email, String phone) {
-
         List<String> lines = fileStorage.readAll(SUPPLIERS_FILE);
         List<String> updated = new ArrayList<>();
-
-        boolean found = false
-                ;
+        boolean found = false;
         for (String line : lines) {
-
             String[] parts = line.split(",", -1);
-
             if (parts.length > 3 && parts[0].trim().equals(String.valueOf(id))) {
                 parts[2] = email;
                 parts[3] = phone;
@@ -83,9 +82,7 @@ public class InventoryService {
     public boolean deleteSupplier(int id) {
         List<String> lines = fileStorage.readAll(SUPPLIERS_FILE);
         List<String> updated = new ArrayList<>();
-
         boolean found = false;
-
         for (String line : lines) {
             String[] parts = line.split(",", -1);
             if (parts.length > 0 && parts[0].trim().equals(String.valueOf(id))) {
@@ -98,7 +95,7 @@ public class InventoryService {
         return found;
     }
 
-    // ---- INGREDIENT METHODS ----
+    // INGREDIENT METHODS
 
     public List<Ingredient> getAllIngredients() {
         List<String> lines = fileStorage.readAll(INGREDIENTS_FILE);
@@ -163,5 +160,90 @@ public class InventoryService {
         }
         if (found) fileStorage.writeAll(INGREDIENTS_FILE, updated);
         return found;
+    }
+
+    // ---- PURCHASE ORDER METHODS ----
+
+    public List<PurchaseOrder> getAllPurchaseOrders() {
+        List<String> lines = fileStorage.readAll(PURCHASE_ORDERS_FILE);
+        List<PurchaseOrder> orders = new ArrayList<>();
+        for (String line : lines) {
+            PurchaseOrder po = PurchaseOrder.fromLine(line);
+            if (po != null) orders.add(po);
+        }
+        return orders;
+    }
+
+    public boolean placePurchaseOrder(int supplierId, int ingredientId, double quantity, double unitPrice) {
+        try {
+            Supplier supplier = findSupplierById(supplierId);
+            Ingredient ingredient = findIngredientById(ingredientId);
+            if (supplier == null || ingredient == null) return false;
+
+            List<String> lines = fileStorage.readAll(PURCHASE_ORDERS_FILE);
+            int newId = FileStorage.generateId(lines);
+
+            PurchaseOrder po = new PurchaseOrder(
+                    newId,
+                    supplierId, supplier.getName(), supplier.getSupplierType(),
+                    ingredientId, ingredient.getName(), ingredient.getUnit(),
+                    quantity, unitPrice, supplier.getDiscountRate()
+            );
+            fileStorage.appendLine(PURCHASE_ORDERS_FILE, po.toString());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean receivePurchaseOrder(int orderId) {
+        List<String> lines = fileStorage.readAll(PURCHASE_ORDERS_FILE);
+        List<String> updated = new ArrayList<>();
+        boolean found = false;
+        PurchaseOrder target = null;
+
+        for (String line : lines) {
+            PurchaseOrder po = PurchaseOrder.fromLine(line);
+            if (po != null && po.getId() == orderId && "PENDING".equals(po.getStatus())) {
+                po.setStatus("RECEIVED");
+                updated.add(po.toString());
+                target = po;
+                found = true;
+            } else {
+                updated.add(line);
+            }
+        }
+
+        if (found && target != null) {
+            fileStorage.writeAll(PURCHASE_ORDERS_FILE, updated);
+            updateIngredientStock(target.getIngredientId(),
+                    findIngredientById(target.getIngredientId()).getQuantityInStock() + target.getQuantityOrdered());
+        }
+        return found;
+    }
+
+    public boolean cancelPurchaseOrder(int orderId) {
+        List<String> lines = fileStorage.readAll(PURCHASE_ORDERS_FILE);
+        List<String> updated = new ArrayList<>();
+        boolean found = false;
+        for (String line : lines) {
+            PurchaseOrder po = PurchaseOrder.fromLine(line);
+            if (po != null && po.getId() == orderId && "PENDING".equals(po.getStatus())) {
+                po.setStatus("CANCELLED");
+                updated.add(po.toString());
+                found = true;
+            } else {
+                updated.add(line);
+            }
+        }
+        if (found) fileStorage.writeAll(PURCHASE_ORDERS_FILE, updated);
+        return found;
+    }
+
+    public Ingredient findIngredientById(int id) {
+        for (Ingredient i : getAllIngredients()) {
+            if (i.getId() == id) return i;
+        }
+        return null;
     }
 }
