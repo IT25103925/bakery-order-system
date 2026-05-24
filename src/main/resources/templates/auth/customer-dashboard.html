@@ -1,70 +1,201 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <title>Dashboard - SweetBite Bakery</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link th:href="@{/css/style.css}" rel="stylesheet">
+  <style>
+    .dash-card {
+      border-radius: 18px;
+      border: none;
+      overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+      height: 100%;
+      background: #fff;
+    }
+
+    .dash-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(192, 57, 43, 0.13);
+    }
+
+    .dash-img {
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dash-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s;
+    }
+
+    .dash-card:hover .dash-img img {
+      transform: scale(1.07);
+    }
+
+    .dash-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(44, 62, 80, 0.45) 100%);
+    }
+
+    .dash-body {
+      padding: 20px 22px 22px;
+    }
+
+    .dash-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+
+    .dash-desc {
+      font-size: 0.86rem;
+      color: #999;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+
+    .dash-btn {
+      display: block;
+      width: 100%;
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 0;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.18s;
+    }
+
+    .dash-btn:hover {
+      background: #96281b;
+      color: #fff;
+    }
+
+    .welcome-name {
+      color: #f39c12;
+    }
+  </style>
 </head>
+
 <body>
   <div th:replace="~{common/navbar :: navbar}"></div>
   <div class="bakery-hero">
-    <h1>Welcome, <span th:text="${username}">Customer</span>! 👋</h1>
+    <h1>Welcome, <span class="welcome-name" th:text="${username}">Customer</span>! 👋</h1>
     <p>Fresh baked goodness awaits you</p>
   </div>
-  <div class="container mt-4">
+
+  <div class="container mt-4 mb-5">
     <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card stat-card p-4 text-center">
-          <div style="font-size:2.5rem">🛒</div>
-          <h5 class="mt-2 fw-bold">Browse Products</h5>
-          <p class="text-muted">Explore our fresh bakery catalog</p>
-          <a th:href="@{/products}" class="btn btn-primary">Shop Now</a>
+
+      <!-- Browse Products -->
+      <div class="col-md-4 col-sm-6">
+        <div class="dash-card">
+          <div class="dash-img">
+            <img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=500&q=80" alt="Products">
+            <div class="dash-img-overlay"></div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-title">Browse Products</div>
+            <div class="dash-desc">Explore our fresh bakery catalog — breads, cakes, pastries & more</div>
+            <a th:href="@{/products}" class="dash-btn">Shop Now</a>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card stat-card p-4 text-center">
-          <div style="font-size:2.5rem">🎂</div>
-          <h5 class="mt-2 fw-bold">Custom Cakes</h5>
-          <p class="text-muted">Book a custom cake for any occasion</p>
-          <a th:href="@{/cakes/request}" class="btn btn-primary">Book Now</a>
+
+      <!-- Custom Cakes -->
+      <div class="col-md-4 col-sm-6">
+        <div class="dash-card">
+          <div class="dash-img">
+            <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=500&q=80" alt="Custom Cakes">
+            <div class="dash-img-overlay"></div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-title">Custom Cakes</div>
+            <div class="dash-desc">Book a birthday or wedding cake made just for your occasion</div>
+            <a th:href="@{/cakes/gallery}" class="dash-btn">Browse &amp; Book</a>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card stat-card p-4 text-center">
-          <div style="font-size:2.5rem">📦</div>
-          <h5 class="mt-2 fw-bold">My Orders</h5>
-          <p class="text-muted">Track and manage your orders</p>
-          <a th:href="@{/orders/history}" class="btn btn-primary">View Orders</a>
+
+      <!-- My Orders -->
+      <div class="col-md-4 col-sm-6">
+        <div class="dash-card">
+          <div class="dash-img">
+            <img src="https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=500&q=80" alt="My Orders">
+            <div class="dash-img-overlay"></div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-title">My Orders</div>
+            <div class="dash-desc">Track and manage all your current and past orders</div>
+            <a th:href="@{/orders/history}" class="dash-btn">View Orders</a>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card stat-card p-4 text-center">
-          <div style="font-size:2.5rem">⭐</div>
-          <h5 class="mt-2 fw-bold">My Reviews</h5>
-          <p class="text-muted">View and manage your feedback</p>
-          <a th:href="@{/reviews/my}" class="btn btn-primary">My Reviews</a>
+
+      <!-- My Reviews -->
+      <div class="col-md-4 col-sm-6">
+        <div class="dash-card">
+          <div class="dash-img">
+            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&q=80" alt="My Reviews">
+            <div class="dash-img-overlay"></div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-title">My Reviews</div>
+            <div class="dash-desc">View and manage the feedback you have shared with us</div>
+            <a th:href="@{/reviews/my}" class="dash-btn">My Reviews</a>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card stat-card p-4 text-center">
-          <div style="font-size:2.5rem">🎂</div>
-          <h5 class="mt-2 fw-bold">Cake Bookings</h5>
-          <p class="text-muted">Check status of your cake orders</p>
-          <a th:href="@{/cakes/status}" class="btn btn-primary">View Bookings</a>
+
+      <!-- Cake Bookings -->
+      <div class="col-md-4 col-sm-6">
+        <div class="dash-card">
+          <div class="dash-img">
+            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80" alt="Cake Bookings">
+            <div class="dash-img-overlay"></div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-title">Cake Bookings</div>
+            <div class="dash-desc">Check the live status of your custom cake orders</div>
+            <a th:href="@{/cakes/status}" class="dash-btn">View Bookings</a>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card stat-card p-4 text-center">
-          <div style="font-size:2.5rem">👤</div>
-          <h5 class="mt-2 fw-bold">My Profile</h5>
-          <p class="text-muted">Update your personal details</p>
-          <a th:href="@{/users/profile}" class="btn btn-primary">Edit Profile</a>
+
+      <!-- My Profile -->
+      <div class="col-md-4 col-sm-6">
+        <div class="dash-card">
+          <div class="dash-img">
+            <img src="https://images.unsplash.com/photo-1556742111-a301076d9d18?w=500&q=80" alt="My Profile">
+            <div class="dash-img-overlay"></div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-title">My Profile</div>
+            <div class="dash-desc">Update your personal details, address and contact info</div>
+            <a th:href="@{/users/profile}" class="dash-btn">Edit Profile</a>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
-  <footer class="text-center mt-5 py-3"><p>&copy; 2024 SweetBite Bakery - SE1020 OOP Project</p></footer>
+
+  <footer class="text-center mt-2 py-3">
+    <p class="text-muted small">&copy; 2024 SweetBite Bakery &mdash; SE1020 OOP Project</p>
+  </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
