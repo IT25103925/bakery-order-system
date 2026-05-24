@@ -25,8 +25,7 @@
           <p class="mb-1 small"><strong>Message:</strong> <span th:text="${c.message}"></span></p>
           <p class="mb-1 small"><strong>Delivery:</strong> <span th:text="${c.deliveryDate}"></span></p>
           <p class="mb-2 fw-semibold text-danger">Rs. <span th:text="${#numbers.formatDecimal(c.price,1,2)}"></span></p>
-          <div class="d-flex gap-2" th:if="${c.status.name() == 'SUBMITTED'}">
-            <a th:href="@{/cakes/edit/{id}(id=${c.id})}" class="btn btn-sm btn-warning">Edit</a>
+          <div th:if="${c.status.name() == 'SUBMITTED'}">
             <form th:action="@{/cakes/cancel/{id}(id=${c.id})}" method="post" onsubmit="return confirm('Cancel this booking?')">
               <button class="btn btn-sm btn-outline-danger">Cancel</button>
             </form>
