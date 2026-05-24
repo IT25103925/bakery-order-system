@@ -8,17 +8,18 @@ public class BirthdayCake extends CustomCake {
     public BirthdayCake() { super(); setCakeType("BIRTHDAY"); }
 
     public BirthdayCake(int id, int customerId, String customerName, String flavor,
-                         int tiers, String message, String deliveryDate, String theme, String ageDecoration) {
+                         int tiers, String message, String deliveryDate, String theme, String ageDecoration, double weightKg) {
         super(id, customerId, customerName, flavor, tiers, message, deliveryDate, "BIRTHDAY");
         this.theme = theme;
         this.ageDecoration = ageDecoration;
+        setWeightKg(weightKg);
         setPrice(calculateBasePrice());
     }
 
-    // Method Overriding - birthday cakes have character decorations (Lecture 04)
+    // Method Overriding - birthday cakes have character decorations
     @Override
     public double calculateBasePrice() {
-        return getTiers() * 1500.0 + 800.0; // Slightly more for decorations
+        return getTiers() * 1000.0 + getWeightKg() * 800.0 + 200.0;
     }
 
     public String getAgeDecoration() { return ageDecoration; }
