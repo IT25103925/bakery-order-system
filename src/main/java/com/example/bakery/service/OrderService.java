@@ -38,7 +38,18 @@ public class OrderService {
         List<Order> all = getAllOrders();
         List<Order> result = new ArrayList<>();
         for (Order o : all) {
-            if (o.getCustomerId() == customerId) result.add(o);
+            if (o.getCustomerId() == customerId) {
+                // Resolve product names from productId
+                for (OrderItem item : o.getItems()) {
+                    if (item.getProductName() == null || item.getProductName().isEmpty()) {
+                        try {
+                            Product p = productService.findById(item.getProductId());
+                            if (p != null) item.setProductName(p.getName());
+                        } catch (Exception ignored) {}
+                    }
+                }
+                result.add(o);
+            }
         }
         return result;
     }
