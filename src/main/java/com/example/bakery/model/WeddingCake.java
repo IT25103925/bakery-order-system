@@ -10,18 +10,19 @@ public class WeddingCake extends CustomCake {
 
     public WeddingCake(int id, int customerId, String customerName, String flavor,
                         int tiers, String message, String deliveryDate,
-                        String couplesNames, String frostingStyle) {
+                        String couplesNames, String frostingStyle, double weightKg) {
         super(id, customerId, customerName, flavor, tiers, message, deliveryDate, "WEDDING");
         this.couplesNames = couplesNames;
         this.weddingDate = deliveryDate;
+        setWeightKg(weightKg);
         this.frostingStyle = frostingStyle;
         setPrice(calculateBasePrice());
     }
 
-    // Wedding cakes are premium - higher base price (Lecture 04 - Method Overriding)
+    // Wedding cakes are premium - higher base price
     @Override
     public double calculateBasePrice() {
-        return getTiers() * 3000.0 + 2000.0;
+        return getTiers() * 2500.0 + getWeightKg() * 1200.0 + 1000.0;
     }
 
     public String getCouplesNames() { return couplesNames; }
