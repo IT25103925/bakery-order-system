@@ -21,8 +21,9 @@ public class ProductService {
         List<Product> products = new ArrayList<>();
         for (String line : lines) {
             String[] parts = line.split(",", -1);
-            if (parts.length < 7) continue;
-            String type = parts[6].trim();
+            if (parts.length < 8) continue;
+            // TYPE is always at index [last-3] to handle commas in description
+            String type = parts[parts.length - 4].trim();
             Product p;
             if ("PERISHABLE".equals(type)) {
                 p = PerishableProduct.fromLine(line);
