@@ -24,13 +24,14 @@ public class FileStorage {
             dir.mkdirs();
         }
         // Initialize default data files if they don't exist
-        initFile("persons.txt");
+        initFile("users.txt");
         initFile("products.txt");
         initFile("orders.txt");
         initFile("cakes.txt");
         initFile("suppliers.txt");
         initFile("ingredients.txt");
         initFile("reviews.txt");
+        initFile("purchase_orders.txt");
     }
 
     // Static helper method - shared across all instances (Lecture 05)
