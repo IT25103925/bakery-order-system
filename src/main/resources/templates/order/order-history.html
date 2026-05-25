@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Order History - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="container mt-4">
+    <h3 class="fw-bold mb-3">📦 My Order History</h3>
+    <div th:if="${#lists.isEmpty(orders)}" class="card p-5 text-center">
+      <p class="text-muted fs-5">No orders yet.</p>
+      <a th:href="@{/products}" class="btn btn-primary">Start Shopping</a>
+    </div>
+    <div class="card" th:unless="${#lists.isEmpty(orders)}">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark"><tr>
+            <th>Order #</th><th>Date</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr th:each="o : ${orders}">
+              <td th:text="${o.id}"></td>
+              <td th:text="${o.orderDate}"></td>
+              <td>
+                <span th:each="item, iter : ${o.items}">
+                  <span th:text="${item.productName}"></span><span th:if="${!iter.last}">, </span>
+                </span>
+              </td>
+              <td>Rs. <span th:text="${#numbers.formatDecimal(o.totalAmount,1,2)}"></span></td>
+              <td th:text="${o.paymentMethod != null ? (o.paymentMethod.name() == 'CASH_ON_PICKUP' ? 'Cash on Pickup' : (o.paymentMethod.name() == 'ONLINE_SIMULATION' ? 'Online Payment (Card)' : (o.paymentMethod.name() == 'ONLINE' ? 'Online Payment' : (o.paymentMethod.name() == 'CARD' ? 'Card Payment' : o.paymentMethod.name())))) : '-'}"></td>
+              <td><span class="badge" th:classappend="'badge-status-' + ${o.status}"
+                        th:text="${o.status != null ? (o.status.name() == 'PENDING' ? 'Pending' : (o.status.name() == 'CONFIRMED' ? 'Confirmed' : (o.status.name() == 'DELIVERED' ? 'Delivered' : (o.status.name() == 'CANCELLED' ? 'Cancelled' : o.status.name())))) : '-'}"></span></td>
+              <td>
+                <form th:action="@{/orders/cancel/{id}(id=${o.id})}" method="post" style="display:inline"
+                      th:if="${o.status.name() == 'PENDING'}" onsubmit="return confirm('Cancel this order?')">
+                  <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
