@@ -1,5 +1,7 @@
 package com.example.bakery.controller;
 
+import com.example.bakery.model.Product;
+import com.example.bakery.service.ProductService;
 import com.example.bakery.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,25 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private ProductService productService;
+
+    private boolean isLoggedIn(HttpSession session) {
+        return session.getAttribute("userId") != null;
+    }
+
+    private boolean isAdmin(HttpSession session) {
+        return "ADMIN".equals(session.getAttribute("userRole"));
+    }
+
     // Customer: submit review
     @GetMapping("/submit/{productId}")
     public String submitReviewPage(@PathVariable int productId, HttpSession session, Model model) {
-        if (session.getAttribute("userId") == null) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isLoggedIn(session)) return "redirect:/customer-login";
         model.addAttribute("productId", productId);
+        Product product = productService.findById(productId);
+        String productName = (product != null) ? product.getName() : "Product";
+        model.addAttribute("productName", productName);
         return "review/review-submit";
     }
 
@@ -26,7 +42,7 @@ public class ReviewController {
     public String submitReview(@RequestParam int productId, @RequestParam String productName,
                                 @RequestParam int rating, @RequestParam String comment,
                                 HttpSession session) {
-        if (session.getAttribute("userId") == null) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isLoggedIn(session)) return "redirect:/customer-login";
         int customerId = (int) session.getAttribute("userId");
         String username = (String) session.getAttribute("username");
         reviewService.postReview(customerId, username, productId, productName, rating, comment);
@@ -36,7 +52,7 @@ public class ReviewController {
     // Customer: my reviews
     @GetMapping("/my")
     public String myReviews(HttpSession session, Model model) {
-        if (session.getAttribute("userId") == null) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isLoggedIn(session)) return "redirect:/customer-login";
         int customerId = (int) session.getAttribute("userId");
         model.addAttribute("reviews", reviewService.getReviewsByCustomer(customerId));
         return "review/review-list";
@@ -46,7 +62,7 @@ public class ReviewController {
     @PostMapping("/edit/{id}")
     public String editReview(@PathVariable int id, @RequestParam int rating,
                               @RequestParam String comment, HttpSession session) {
-        if (session.getAttribute("userId") == null) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isLoggedIn(session)) return "redirect:/customer-login";
         reviewService.updateReview(id, rating, comment);
         return "redirect:/reviews/my";
     }
@@ -54,7 +70,7 @@ public class ReviewController {
     // Admin: moderation page
     @GetMapping("/admin")
     public String adminModerationPage(HttpSession session, Model model) {
-        if (!"STAFF".equals(session.getAttribute("userRole"))) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isAdmin(session)) return "redirect:/admin-login";
         model.addAttribute("allReviews", reviewService.getAllReviews());
         return "review/admin-moderation";
     }
@@ -62,7 +78,7 @@ public class ReviewController {
     // Admin: approve
     @PostMapping("/admin/approve/{id}")
     public String approveReview(@PathVariable int id, HttpSession session) {
-        if (!"STAFF".equals(session.getAttribute("userRole"))) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isAdmin(session)) return "redirect:/admin-login";
         reviewService.approveReview(id);
         return "redirect:/reviews/admin";
     }
@@ -70,7 +86,7 @@ public class ReviewController {
     // Admin: delete
     @PostMapping("/admin/delete/{id}")
     public String deleteReview(@PathVariable int id, HttpSession session) {
-        if (!"STAFF".equals(session.getAttribute("userRole"))) return session.getAttribute("userRole") != null && "STAFF".equals(session.getAttribute("userRole")) ? "redirect:/admin-login" : "redirect:/customer-login";
+        if (!isAdmin(session)) return "redirect:/admin-login";
         reviewService.deleteReview(id);
         return "redirect:/reviews/admin";
     }

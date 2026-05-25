@@ -12,7 +12,7 @@
     <div class="card p-4">
       <form th:action="@{/reviews/submit}" method="post">
         <input type="hidden" name="productId" th:value="${productId}">
-        <input type="hidden" name="productName" value="Product">
+        <input type="hidden" name="productName" th:value="${productName}">
         <div class="mb-3">
           <label class="form-label fw-semibold">Your Rating</label>
           <div class="d-flex gap-2">
