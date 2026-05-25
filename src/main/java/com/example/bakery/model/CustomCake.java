@@ -14,7 +14,8 @@ public class CustomCake {
     private double price;
     private BookingStatus status;
     private String specialNotes;
-    private String cakeType; // "BIRTHDAY" or "WEDDING"
+    private String cakeType;
+    private double weightKg; // "BIRTHDAY" or "WEDDING"
 
     public CustomCake() {
         this.status = BookingStatus.SUBMITTED;
@@ -34,7 +35,7 @@ public class CustomCake {
         this.price = calculateBasePrice();
     }
 
-    // Overridable method - subclasses can override (Lecture 04)
+    // Overridable method - subclasses can override
     public double calculateBasePrice() {
         return tiers * 1500.0 + 500.0; // Base pricing
     }
@@ -43,7 +44,7 @@ public class CustomCake {
     public String toString() {
         return id + "," + customerId + "," + customerName + "," + flavor + "," + tiers + "," +
                message + "," + deliveryDate + "," + price + "," + status.name() + "," +
-               cakeType + "," + (specialNotes != null ? specialNotes : "");
+               cakeType + "," + (specialNotes != null ? specialNotes : "") + "," + weightKg;
     }
 
     public static CustomCake fromLine(String line) {
@@ -62,6 +63,7 @@ public class CustomCake {
             cake.setStatus(BookingStatus.valueOf(p[8].trim()));
             cake.setCakeType(p[9].trim());
             if (p.length > 10) cake.setSpecialNotes(p[10].trim());
+            if (p.length > 11) { try { cake.setWeightKg(Double.parseDouble(p[11].trim())); } catch(Exception ignored){} }
             return cake;
         } catch (Exception e) { return null; }
     }
@@ -89,4 +91,6 @@ public class CustomCake {
     public void setSpecialNotes(String specialNotes) { this.specialNotes = specialNotes; }
     public String getCakeType() { return cakeType; }
     public void setCakeType(String cakeType) { this.cakeType = cakeType; }
+    public double getWeightKg() { return weightKg; }
+    public void setWeightKg(double weightKg) { this.weightKg = weightKg; }
 }
