@@ -1,0 +1,4 @@
+1,Colombo Fresh Dairy,dairy@cfresh.lk,0112223344,123 Maradana Rd, Colombo,LOCAL,Colombo
+2,Kandy Hill Eggs,eggs@kandyhill.lk,0812345678,56 Peradeniya Rd, Kandy,LOCAL,Kandy
+3,Prima Flour Mills,orders@prima.lk,0113456789,Prima Industrial Zone, Kelaniya,WHOLESALE,100
+4,Ceylon Sugar Corp,supply@ceylonsugar.lk,0112345678,20 Industrial Estate, Ekala,WHOLESALE,200

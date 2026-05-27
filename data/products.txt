@@ -1,0 +1,10 @@
+1,Sourdough Bread,Traditional sourdough with crispy crust,350.0,19,BREAD,PERISHABLE,true,2025-12-31,0.0
+2,Butter Croissant,Flaky French-style croissant with real butter,180.0,29,PASTRY,PERISHABLE,true,2025-12-31,0.0
+3,Black Forest Cake Slice,Rich chocolate cake with cherries and cream,450.0,14,CAKE,PERISHABLE,true,2025-12-31,0.0
+4,Cinnamon Roll,Warm cinnamon roll with cream cheese glaze,220.0,24,PASTRY,PERISHABLE,true,2025-12-31,0.0
+5,Whole Wheat Bread,Healthy whole wheat loaf, freshly baked,280.0,18,BREAD,PERISHABLE,true,2025-12-31,0.0
+6,Chocolate Chip Cookies (6 pack),Classic chocolate chip cookies, crispy outside soft inside,320.0,50,COOKIE,NON_PERISHABLE,true,90,false
+7,Shortbread Tin,Traditional Scottish shortbread in a gift tin,850.0,25,COOKIE,NON_PERISHABLE,true,180,false
+8,Brownie Box (4 pack),Fudgy chocolate brownies, individually wrapped,480.0,35,CAKE,NON_PERISHABLE,true,60,false
+9,Almond Biscotti (8 pack),Italian-style almond biscotti, perfect with coffee,390.0,40,COOKIE,NON_PERISHABLE,true,120,false
+10,Vanilla Cupcake,Moist vanilla cupcake with buttercream frosting,150.0,24,CAKE,PERISHABLE,true,2025-12-31,0.0

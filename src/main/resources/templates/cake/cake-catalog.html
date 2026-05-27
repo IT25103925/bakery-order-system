@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cake Gallery - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <style>
+    .catalog-hero {
+      position: relative; height: 340px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+    }
+    .catalog-hero img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center 40%;
+    }
+    .catalog-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(150,40,27,.5) 0%, rgba(44,62,80,.82) 100%);
+    }
+    .catalog-hero-text { position: relative; z-index: 2; color: white; }
+    .catalog-hero-text h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 10px; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+    .catalog-hero-text p  { font-size: 1.08rem; opacity: .92; margin: 0; }
+
+    .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 28px 0 20px; }
+    .filter-btn {
+      padding: 9px 24px; border-radius: 50px; border: 2px solid #e0dbd4;
+      background: white; font-weight: 700; font-size: .88rem; color: #888;
+      cursor: pointer; transition: all .18s; letter-spacing: .03em;
+    }
+    .filter-btn.active, .filter-btn:hover { background: #c0392b; border-color: #c0392b; color: white; }
+
+    .cake-card {
+      border-radius: 18px; border: none; overflow: hidden; height: 100%;
+      box-shadow: 0 3px 18px rgba(0,0,0,.08);
+      transition: transform .22s, box-shadow .22s; background: white;
+    }
+    .cake-card:hover { transform: translateY(-7px); box-shadow: 0 14px 38px rgba(192,57,43,.16); }
+
+    .cake-img-wrap { position: relative; height: 230px; overflow: hidden; background: #f5e6d3; }
+    .cake-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .38s; display: block; }
+    .cake-card:hover .cake-img-wrap img { transform: scale(1.07); }
+
+    .cake-type-badge {
+      position: absolute; top: 12px; left: 12px;
+      font-size: .7rem; font-weight: 800; letter-spacing: .06em;
+      padding: 4px 11px; border-radius: 20px; color: white; text-transform: uppercase;
+    }
+    .badge-birthday { background: rgba(192,57,43,.9); }
+    .badge-wedding  { background: rgba(52,73,94,.85); }
+
+    .cake-rating {
+      position: absolute; bottom: 10px; right: 10px;
+      background: rgba(0,0,0,.55); color: #f39c12;
+      font-size: .78rem; font-weight: 700; padding: 3px 9px;
+      border-radius: 20px; backdrop-filter: blur(4px);
+    }
+
+    .cake-body { padding: 18px 20px 20px; display: flex; flex-direction: column; }
+    .cake-name { font-size: 1.05rem; font-weight: 800; color: #2c3e50; margin-bottom: 4px; }
+    .cake-flavor { font-size: .82rem; color: #aaa; margin-bottom: 8px; font-style: italic; }
+    .cake-desc { font-size: .85rem; color: #888; flex-grow: 1; line-height: 1.5; margin-bottom: 12px; }
+    .cake-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .cake-price { font-size: 1.18rem; font-weight: 800; color: #c0392b; }
+    .cake-tiers { font-size: .8rem; color: #bbb; font-weight: 600; }
+
+    .btn-customize {
+      display: block; width: 100%; text-align: center; text-decoration: none;
+      background: #c0392b; color: white; border: none; border-radius: 10px;
+      padding: 11px 0; font-weight: 800; font-size: .9rem;
+      transition: background .18s, transform .12s;
+    }
+    .btn-customize:hover { background: #96281b; color: white; transform: translateY(-1px); }
+
+    .section-label {
+      font-size: 1.3rem; font-weight: 800; color: #2c3e50;
+      margin: 8px 0 22px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 2px; background: #f0ebe4; border-radius: 2px; }
+
+    .cta-banner {
+      background: linear-gradient(135deg, #c0392b 0%, #96281b 100%);
+      border-radius: 20px; color: white; padding: 36px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; margin: 48px 0 20px; flex-wrap: wrap;
+    }
+    .cta-banner h3 { font-size: 1.4rem; font-weight: 800; margin: 0 0 6px; }
+    .cta-banner p  { margin: 0; opacity: .88; font-size: .95rem; }
+    .btn-cta-white {
+      background: white; color: #c0392b; border: none;
+      border-radius: 12px; padding: 13px 28px; font-weight: 800; font-size: .95rem;
+      white-space: nowrap; text-decoration: none; display: inline-block; transition: background .18s;
+    }
+    .btn-cta-white:hover { background: #fef5f5; color: #96281b; }
+    .cake-item.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+
+  <div class="catalog-hero">
+    <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=1400&q=80" alt="Cake Gallery">
+    <div class="catalog-hero-overlay"></div>
+    <div class="catalog-hero-text">
+      <h1>🎂 Cake Gallery</h1>
+      <p>Get inspired by our handcrafted creations — then make it your own</p>
+    </div>
+  </div>
+
+  <div class="container mb-5" style="max-width: 1100px;">
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterCakes('all', this)">✨ All Cakes</button>
+      <button class="filter-btn" onclick="filterCakes('birthday', this)">🎈 Birthday</button>
+      <button class="filter-btn" onclick="filterCakes('wedding', this)">💍 Wedding</button>
+    </div>
+
+    <!-- BIRTHDAY -->
+    <div class="section-label" id="label-birthday">🎈 Birthday Cakes</div>
+    <div class="row g-4 mb-5">
+
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="birthday">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&auto=format&fit=crop&q=80" alt="Chocolate Drip Dream">
+            <span class="cake-type-badge badge-birthday">Birthday</span>
+            <span class="cake-rating">⭐ 4.9</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Chocolate Drip Dream</div>
+            <div class="cake-flavor">Dark Chocolate Ganache</div>
+            <div class="cake-desc">Rich dark chocolate drip cake topped with chocolate bars, truffles and a gold birthday topper.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 2,500</span><span class="cake-tiers">1–2 Tiers</span></div>
+            <a href="/cakes/request?type=birthday" class="btn-customize">✨ Customize &amp; Request</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="birthday">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=500&auto=format&fit=crop&q=80" alt="Pink Vintage" onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=80'">
+            <span class="cake-type-badge badge-birthday">Birthday</span>
+            <span class="cake-rating">⭐ 5.0</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Pink Vintage</div>
+            <div class="cake-flavor">Strawberry &amp; Buttercream</div>
+            <div class="cake-desc">Soft pink buttercream with golden piped borders, delicate roses and a single birthday candle.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 2,000</span><span class="cake-tiers">1 Tier</span></div>
+            <a href="/cakes/request?type=birthday" class="btn-customize">✨ Customize &amp; Request</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="birthday">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1562440499-64c9a111f713?w=500&auto=format&fit=crop&q=80" alt="Cute Bear">
+            <span class="cake-type-badge badge-birthday">Birthday</span>
+            <span class="cake-rating">⭐ 4.9</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Cute &amp; Sweet</div>
+            <div class="cake-flavor">Vanilla &amp; Pink Cream</div>
+            <div class="cake-desc">Adorable pastel cake with cute decorations and whipped cream swirls — perfect for any age.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 3,000</span><span class="cake-tiers">1 Tier</span></div>
+            <a href="/cakes/request?type=birthday" class="btn-customize">✨ Customize &amp; Request</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="birthday">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&auto=format&fit=crop&q=80" alt="Navy Blue Glam">
+            <span class="cake-type-badge badge-birthday">Birthday</span>
+            <span class="cake-rating">⭐ 4.8</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Navy Blue Glam</div>
+            <div class="cake-flavor">Blueberry &amp; Fondant</div>
+            <div class="cake-desc">Stunning deep navy cake with gold script topper and fresh berry decorations.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 3,500</span><span class="cake-tiers">1–2 Tiers</span></div>
+            <a href="/cakes/request?type=birthday" class="btn-customize">✨ Customize &amp; Request</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- WEDDING -->
+    <div class="section-label" id="label-wedding">💍 Wedding Cakes</div>
+    <div class="row g-4">
+
+      <!-- Wedding 1: Classic White Elegance -->
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="wedding">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=500&auto=format&fit=crop&q=80"
+                 alt="Classic White Elegance"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&auto=format&fit=crop&q=80'">
+            <span class="cake-type-badge badge-wedding">Wedding</span>
+            <span class="cake-rating">⭐ 5.0</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Classic White Elegance</div>
+            <div class="cake-flavor">Vanilla &amp; Fondant</div>
+            <div class="cake-desc">Pristine white tiered fondant cake adorned with lush pink roses and peony blooms.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 8,000</span><span class="cake-tiers">2–5 Tiers</span></div>
+            <a href="/cakes/request?type=wedding" class="btn-customize">💍 Order Similar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wedding 2: Floral Garden -->
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="wedding">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&auto=format&fit=crop&q=80"
+                 alt="Floral Garden"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&auto=format&fit=crop&q=80'">
+            <span class="cake-type-badge badge-wedding">Wedding</span>
+            <span class="cake-rating">⭐ 4.9</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Floral Garden</div>
+            <div class="cake-flavor">Rose &amp; Whipped Cream</div>
+            <div class="cake-desc">Dreamy white tiers cascading with hand-crafted sugar roses, peonies and gold leaf accents.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 14,000</span><span class="cake-tiers">3–5 Tiers</span></div>
+            <a href="/cakes/request?type=wedding" class="btn-customize">💍 Order Similar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wedding 3: Rustic Romance -->
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="wedding">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1558636508-e0969431e2f2?w=500&auto=format&fit=crop&q=80"
+                 alt="Rustic Romance"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&auto=format&fit=crop&q=80'">
+            <span class="cake-type-badge badge-wedding">Wedding</span>
+            <span class="cake-rating">⭐ 4.8</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Rustic Romance</div>
+            <div class="cake-flavor">Almond &amp; Buttercream</div>
+            <div class="cake-desc">Semi-naked tiers with exposed golden sponge, fresh berries and elegant wild flower sprigs.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 11,000</span><span class="cake-tiers">2–4 Tiers</span></div>
+            <a href="/cakes/request?type=wedding" class="btn-customize">💍 Order Similar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wedding 4: Black & Gold Luxury -->
+      <div class="col-xl-3 col-md-4 col-sm-6 cake-item" data-type="wedding">
+        <div class="cake-card">
+          <div class="cake-img-wrap">
+            <img src="https://images.unsplash.com/photo-1568051243858-533a607809a5?w=500&auto=format&fit=crop&q=80"
+                 alt="Black Gold Luxury"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1542826438-bd32f43d626f?w=500&auto=format&fit=crop&q=80'">
+            <span class="cake-type-badge badge-wedding">Wedding</span>
+            <span class="cake-rating">⭐ 5.0</span>
+          </div>
+          <div class="cake-body">
+            <div class="cake-name">Black &amp; Gold Luxury</div>
+            <div class="cake-flavor">Fruitcake &amp; Fondant</div>
+            <div class="cake-desc">Regal black fondant tiers with gold leaf accents, monogram initials and dramatic dark florals.</div>
+            <div class="cake-meta"><span class="cake-price">From Rs. 18,000</span><span class="cake-tiers">3–5 Tiers</span></div>
+            <a href="/cakes/request?type=wedding" class="btn-customize">💍 Order Similar</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cta-banner">
+      <div>
+        <h3>Don't see exactly what you want? 🎨</h3>
+        <p>Describe your dream cake — we'll craft it from scratch, just for you.</p>
+      </div>
+      <a href="/cakes/request" class="btn-cta-white">🎂 Start a Custom Request →</a>
+    </div>
+  </div>
+
+  <footer class="text-center py-3">
+    <p class="text-muted small">&copy; 2024 SweetBite Bakery &mdash; SE1020 OOP Project</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function filterCakes(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.cake-item').forEach(item => {
+        if (type === 'all' || item.dataset.type === type) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+      document.getElementById('label-birthday').style.display = (type === 'all' || type === 'birthday') ? 'flex' : 'none';
+      document.getElementById('label-wedding').style.display  = (type === 'all' || type === 'wedding')  ? 'flex' : 'none';
+    }
+  </script>
+</body>
+</html>

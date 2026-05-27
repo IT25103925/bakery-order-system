@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><title>Add Supplier - SweetBite Bakery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{common/navbar :: navbar}"></div>
+<div class="container mt-4" style="max-width:550px;">
+    <h3 class="fw-bold mb-3">➕ Add New Supplier</h3>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div class="card p-4">
+        <form th:action="@{/inventory/suppliers/add}" method="post">
+            <div class="mb-3"><label class="form-label fw-semibold">Supplier Name</label>
+                <input type="text" name="name" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Contact Email</label>
+                <input type="email" name="email" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Phone</label>
+                <input type="text" name="phone" class="form-control"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Address</label>
+                <input type="text" name="address" class="form-control"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Supplier Type</label>
+                <select name="type" class="form-select" onchange="toggleType(this.value)">
+                    <option value="LOCAL">Local Supplier (5% discount)</option>
+                    <option value="WHOLESALE">Wholesale Supplier (15% discount)</option>
+                </select></div>
+            <div id="localFields">
+                <div class="mb-3"><label class="form-label fw-semibold">Locality / District</label>
+                    <input type="text" name="locality" class="form-control" placeholder="e.g. Colombo, Kandy"></div>
+            </div>
+            <div id="wholesaleFields" style="display:none">
+                <div class="mb-3"><label class="form-label fw-semibold">Minimum Order Quantity</label>
+                    <input type="number" name="moq" class="form-control" value="50"></div>
+            </div>
+            <button type="submit" class="btn btn-primary fw-bold">Add Supplier</button>
+            <a th:href="@{/inventory/suppliers}" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleType(type) {
+        document.getElementById('localFields').style.display = type === 'LOCAL' ? '' : 'none';
+        document.getElementById('wholesaleFields').style.display = type === 'WHOLESALE' ? '' : 'none';
+    }
+</script>
+</body>
+</html>

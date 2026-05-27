@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Confirmed - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <style>
+    .confirm-card { border-radius: 20px; border: none; box-shadow: 0 4px 32px rgba(0,0,0,0.12); overflow: hidden; max-width: 500px; margin: 0 auto; }
+    .confirm-header { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); color: white; padding: 36px; text-align: center; }
+    .confirm-icon { font-size: 4rem; margin-bottom: 10px; }
+    .confirm-body { padding: 30px 36px; background: #fff; }
+    .info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px dashed #eee; }
+    .info-label { color: #888; font-size: 0.93rem; }
+    .info-value { font-weight: 600; color: #2c3e50; font-size: 0.93rem; }
+    .payment-badge-card { background: #eafaf1; color: #27ae60; border-radius: 8px; padding: 6px 14px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
+    .payment-badge-cash { background: #fff8e1; color: #f39c12; border-radius: 8px; padding: 6px 14px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
+    .total-final { background: #fff8f0; border-radius: 12px; padding: 16px 20px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .total-final-label { font-weight: 700; font-size: 1rem; }
+    .total-final-amount { font-size: 1.6rem; font-weight: 800; color: #c0392b; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+
+  <div class="container mt-5 mb-5">
+    <div class="confirm-card">
+      <div class="confirm-header">
+        <div class="confirm-icon">✅</div>
+        <h3 class="fw-bold mb-1">Booking Confirmed!</h3>
+        <p class="mb-0" style="opacity:0.85;">Your cake is on its way to being made 🎂</p>
+      </div>
+      <div class="confirm-body">
+
+        <div class="info-row">
+          <span class="info-label">Booking ID</span>
+          <span class="info-value fw-bold" th:text="'#' + ${cake.id}">#007</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Customer</span>
+          <span class="info-value" th:text="${cake.customerName}">John Doe</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Cake Type</span>
+          <span class="info-value">
+            <span th:if="${cake.cakeType == 'WEDDING'}">💍 Wedding Cake</span>
+            <span th:if="${cake.cakeType == 'BIRTHDAY'}">🎈 Birthday Cake</span>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Flavor</span>
+          <span class="info-value" th:text="${cake.flavor}">Vanilla</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Tiers</span>
+          <span class="info-value" th:text="${cake.tiers} + ' tier(s)'">3 tier(s)</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Delivery Date</span>
+          <span class="info-value" th:text="${cake.deliveryDate}">2025-06-15</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Payment Method</span>
+          <span class="info-value">
+            <span class="payment-badge-card" th:if="${paymentMethod == 'ONLINE_SIMULATION'}">💳 Card Payment — Paid</span>
+            <span class="payment-badge-cash" th:if="${paymentMethod == 'CASH_ON_PICKUP'}">🏪 Cash on Pick-Up</span>
+          </span>
+        </div>
+        <div th:if="${paymentMethod == 'CASH_ON_PICKUP'}" class="alert alert-warning py-2 px-3 mt-3 mb-0" style="font-size:0.87rem; border-radius:10px;">
+          ⚠️ Please bring the full payment when you collect your cake from our bakery.
+        </div>
+
+        <div class="total-final">
+          <span class="total-final-label">Total Amount</span>
+          <span class="total-final-amount" th:text="'Rs. ' + ${#numbers.formatDecimal(cake.price, 1, 'COMMA', 2, 'POINT')}">Rs. 11,000.00</span>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+          <a th:href="@{/cakes/status}" class="btn btn-primary fw-bold">View My Bookings</a>
+          <a th:href="@{/cakes/request}" class="btn btn-outline-secondary">Book Another Cake</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

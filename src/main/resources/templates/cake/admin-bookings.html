@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Admin - Cake Bookings</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+  <div class="container mt-4">
+    <h3 class="fw-bold mb-3">🎂 Custom Cake Bookings (Admin)</h3>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark"><tr>
+            <th>#</th><th>Customer</th><th>Type</th><th>Flavor</th><th>Tiers</th><th>Delivery</th><th>Price</th><th>Status</th><th>Update</th>
+          </tr></thead>
+          <tbody>
+            <tr th:each="c : ${bookings}">
+              <td th:text="${c.id}"></td>
+              <td th:text="${c.customerName}"></td>
+              <td><span class="badge" th:classappend="${c.cakeType == 'WEDDING'} ? 'bg-warning text-dark' : 'bg-info'" th:text="${c.cakeType}"></span></td>
+              <td th:text="${c.flavor}"></td>
+              <td th:text="${c.tiers}"></td>
+              <td th:text="${c.deliveryDate}"></td>
+              <td>Rs. <span th:text="${#numbers.formatDecimal(c.price,1,2)}"></span></td>
+              <td><span class="badge" th:classappend="'badge-status-' + ${c.status}" th:text="${c.status}"></span></td>
+              <td>
+                <form th:action="@{/cakes/admin/status/{id}(id=${c.id})}" method="post" class="d-flex gap-1">
+                  <select name="status" class="form-select form-select-sm" style="width:140px">
+                    <option>SUBMITTED</option><option>IN_PROGRESS</option>
+                    <option>READY</option><option>DELIVERED</option><option>CANCELLED</option>
+                  </select>
+                  <button class="btn btn-sm btn-primary">Update</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+1,All-purpose Flour,50.0,kg,10.0,3,Prima Flour Mills
+2,Butter,15.0,kg,5.0,1,Colombo Fresh Dairy
+3,White Sugar,30.0,kg,8.0,4,Ceylon Sugar Corp
+4,Eggs,4.5,dozen,2.0,2,Kandy Hill Eggs
+5,Whole Milk,8.0,litre,3.0,1,Colombo Fresh Dairy
+6,Cocoa Powder,3.0,kg,2.0,3,Prima Flour Mills
+7,Yeast,0.8,kg,1.0,3,Prima Flour Mills
+8,Vanilla Extract,0.5,litre,0.5,1,Colombo Fresh Dairy

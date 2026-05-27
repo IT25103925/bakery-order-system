@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom Cake Booking - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <style>
+    /* ── Hero ── */
+    .cake-hero {
+      position: relative; height: 260px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+    }
+    .cake-hero img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center 60%;
+    }
+    .cake-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(150,40,27,.55) 0%, rgba(44,62,80,.75) 100%);
+    }
+    .cake-hero-text { position: relative; z-index: 2; color: white; }
+    .cake-hero-text h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .cake-hero-text p  { font-size: 1.05rem; opacity: .9; margin: 0; }
+
+    /* ── Tab switcher ── */
+    .cake-type-switcher {
+      display: flex; background: #f0ede8; border-radius: 14px;
+      padding: 5px; width: fit-content; margin: 32px auto 28px;
+    }
+    .cake-tab-btn {
+      padding: 11px 32px; border-radius: 10px; border: none;
+      background: transparent; font-weight: 700; font-size: .97rem;
+      color: #888; cursor: pointer; transition: all .2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cake-tab-btn.active { background: #c0392b; color: white; box-shadow: 0 2px 12px rgba(192,57,43,.25); }
+    .cake-tab-btn:not(.active):hover { color: #c0392b; background: #fff; }
+
+    /* ── Form card ── */
+    .cake-form-card {
+      background: white; border-radius: 20px;
+      box-shadow: 0 4px 28px rgba(0,0,0,.09);
+      padding: 36px 40px; max-width: 680px; margin: 0 auto;
+    }
+    .form-section-title {
+      font-size: 1.25rem; font-weight: 800; color: #2c3e50;
+      margin-bottom: 24px; padding-bottom: 12px;
+      border-bottom: 2px solid #f5f0eb;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .form-label {
+      font-weight: 600; font-size: .875rem; color: #555;
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .form-control, .form-select {
+      border: 1.5px solid #e8e4df; border-radius: 10px;
+      padding: 11px 14px; font-size: .95rem;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+    }
+
+    /* ── Price preview ── */
+    .price-preview {
+      background: linear-gradient(135deg,#fff8f0,#fef3ea);
+      border: 1.5px dashed #f0c090; border-radius: 12px;
+      padding: 14px 20px; margin-top: 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .price-preview-label { font-size: .87rem; color: #888; font-weight: 600; }
+    .price-preview-amount { font-size: 1.4rem; font-weight: 800; color: #c0392b; }
+
+    /* ── Submit btn ── */
+    .btn-submit {
+      background: #c0392b; color: white; border: none;
+      border-radius: 12px; padding: 14px; font-size: 1rem;
+      font-weight: 800; width: 100%; margin-top: 20px;
+      transition: background .18s, transform .12s; letter-spacing: .02em;
+    }
+    .btn-submit:hover { background: #96281b; transform: translateY(-1px); }
+
+    .tab-pane { display: none; }
+    .tab-pane.show { display: block; }
+
+    /* ── Back to Gallery link ── */
+    .back-to-gallery {
+      display: inline-flex; align-items: center; gap: 7px;
+      color: #c0392b; font-weight: 700; font-size: .88rem;
+      text-decoration: none; margin: 22px auto 0; justify-content: center;
+      width: 100%; transition: gap .15s;
+    }
+    .back-to-gallery:hover { gap: 11px; color: #96281b; }
+
+    /* ── Inspiration strip ── */
+    .inspiration-strip {
+      background: #fff8f5; border: 1.5px solid #f5ddd5;
+      border-radius: 12px; padding: 12px 18px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .inspiration-strip .inspo-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .inspiration-strip p { margin: 0; font-size: .88rem; color: #888; line-height: 1.45; }
+    .inspiration-strip strong { color: #2c3e50; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{common/navbar :: navbar}"></div>
+
+  <!-- ── Hero ── -->
+  <div class="cake-hero">
+    <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=1200&q=80" alt="Custom Cakes">
+    <div class="cake-hero-overlay"></div>
+    <div class="cake-hero-text">
+      <h1>🎂 Custom Cake Booking</h1>
+      <p>Birthday cakes, wedding cakes &amp; more — handcrafted just for you</p>
+    </div>
+  </div>
+
+  <div class="container mb-5" style="max-width:760px;">
+
+    <div th:if="${error}"   class="alert alert-danger  mt-4" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success mt-4" th:text="${success}"></div>
+
+    <!-- Back to Gallery -->
+    <div class="text-center mt-4">
+      <a href="/cakes/gallery" class="back-to-gallery">&#8592; Browse Cake Gallery for Inspiration</a>
+    </div>
+
+    <!-- Inspiration strip -->
+    <div class="inspiration-strip mt-3">
+      <div class="inspo-icon">&#x1F4A1;</div>
+      <p><strong>Tip:</strong> Want to see design ideas first? <a href="/cakes/gallery" style="color:#c0392b;font-weight:700;">Visit our Cake Gallery</a> to browse our sample cakes, then come back here to customize your order.</p>
+    </div>
+
+    <!-- Tab Switcher -->
+    <div class="cake-type-switcher">
+      <button class="cake-tab-btn active" id="btnBirthday" onclick="switchTab('birthday')">
+        🎈 Birthday Cake
+      </button>
+      <button class="cake-tab-btn" id="btnWedding" onclick="switchTab('wedding')">
+        💍 Wedding Cake
+      </button>
+    </div>
+
+    <!-- ── Birthday Form ── -->
+    <div class="tab-pane show" id="birthday">
+      <div class="cake-form-card">
+        <div class="form-section-title">🎈 Birthday Cake Request</div>
+        <form th:action="@{/cakes/request/birthday}" method="post">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Flavor</label>
+              <select name="flavor" class="form-select">
+                <option>Chocolate</option><option>Vanilla</option>
+                <option>Red Velvet</option><option>Strawberry</option>
+                <option>Lemon</option><option>Caramel</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Number of Tiers</label>
+              <select name="tiers" class="form-select" id="bTiers" onchange="updateBirthdayPrice()">
+                <option value="1">1 Tier</option>
+                <option value="2">2 Tiers</option>
+                <option value="3">3 Tiers</option>
+              </select>
+            </div>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Theme</label>
+              <input type="text" name="theme" class="form-control" placeholder="e.g. Unicorn, Superhero">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Age Decoration</label>
+              <input type="text" name="ageDecoration" class="form-control" placeholder="e.g. 5, 18, 21">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Message on Cake</label>
+            <input type="text" name="message" class="form-control" placeholder="Happy Birthday John!">
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Cake Weight (Kg)</label>
+              <select name="weightKg" class="form-select" id="bWeight" onchange="updateBirthdayPrice()">
+                <option value="0.5">0.5 Kg</option>
+                <option value="1" selected>1 Kg</option>
+                <option value="1.5">1.5 Kg</option>
+                <option value="2">2 Kg</option>
+                <option value="3">3 Kg</option>
+                <option value="4">4 Kg</option>
+                <option value="5">5 Kg</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Delivery Date</label>
+              <input type="date" name="deliveryDate" class="form-control" required>
+            </div>
+          </div>
+          <div class="price-preview">
+            <div>
+              <div class="price-preview-label">Estimated Price</div>
+              <div style="font-size:.8rem;color:#bbb;">Final price confirmed on bill</div>
+            </div>
+            <div class="price-preview-amount" id="bPrice">Rs. 2,000.00</div>
+          </div>
+          <button type="submit" class="btn-submit">🎂 Preview Bill &amp; Pay →</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Wedding Form ── -->
+    <div class="tab-pane" id="wedding">
+      <div class="cake-form-card">
+        <div class="form-section-title">💍 Wedding Cake Request</div>
+        <form th:action="@{/cakes/request/wedding}" method="post">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Flavor</label>
+              <select name="flavor" class="form-select">
+                <option>Vanilla</option><option>Chocolate</option>
+                <option>Fruitcake</option><option>Almond</option><option>Rose</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Number of Tiers</label>
+              <select name="tiers" class="form-select" id="wTiers" onchange="updateWeddingPrice()">
+                <option value="2">2 Tiers</option><option value="3">3 Tiers</option>
+                <option value="4">4 Tiers</option><option value="5">5 Tiers</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Couple's Names</label>
+            <input type="text" name="couplesNames" class="form-control" placeholder="John &amp; Jane">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Frosting Style</label>
+            <select name="frostingStyle" class="form-select">
+              <option>Buttercream</option><option>Fondant</option>
+              <option>Whipped Cream</option><option>Naked Cake</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Message on Cake</label>
+            <input type="text" name="message" class="form-control" placeholder="Forever &amp; Always">
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Cake Weight (Kg)</label>
+              <select name="weightKg" class="form-select" id="wWeight" onchange="updateWeddingPrice()">
+                <option value="2">2 Kg</option>
+                <option value="3">3 Kg</option>
+                <option value="4" selected>4 Kg</option>
+                <option value="5">5 Kg</option>
+                <option value="6">6 Kg</option>
+                <option value="8">8 Kg</option>
+                <option value="10">10 Kg</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Wedding Date</label>
+              <input type="date" name="deliveryDate" class="form-control" required>
+            </div>
+          </div>
+          <div class="price-preview">
+            <div>
+              <div class="price-preview-label">Estimated Price</div>
+              <div style="font-size:.8rem;color:#bbb;">Final price confirmed on bill</div>
+            </div>
+            <div class="price-preview-amount" id="wPrice">Rs. 8,000.00</div>
+          </div>
+          <button type="submit" class="btn-submit">💍 Preview Bill &amp; Pay →</button>
+        </form>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function switchTab(type) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show'));
+      document.querySelectorAll('.cake-tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(type).classList.add('show');
+      document.getElementById(type === 'birthday' ? 'btnBirthday' : 'btnWedding').classList.add('active');
+    }
+    function fmt(n) {
+      return 'Rs. ' + n.toLocaleString('en-LK', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+    function updateBirthdayPrice() {
+      const t = parseInt(document.getElementById('bTiers').value) || 1;
+      const w = parseFloat(document.getElementById('bWeight').value) || 1;
+      document.getElementById('bPrice').textContent = fmt(t * 1000 + w * 800 + 200);
+    }
+    function updateWeddingPrice() {
+      const t = parseInt(document.getElementById('wTiers').value) || 2;
+      const w = parseFloat(document.getElementById('wWeight').value) || 4;
+      document.getElementById('wPrice').textContent = fmt(t * 2500 + w * 1200 + 1000);
+    }
+    updateBirthdayPrice();
+    updateWeddingPrice();
+
+    // Auto-switch tab based on URL ?type=birthday or ?type=wedding
+    const urlParams = new URLSearchParams(window.location.search);
+    const preType = urlParams.get('type');
+    if (preType === 'wedding') {
+      switchTab('wedding');
+    } else {
+      switchTab('birthday'); // default
+    }
+  </script>
+</body>
+</html>

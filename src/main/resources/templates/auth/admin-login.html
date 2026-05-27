@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login - SweetBite Bakery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+    .login-card { border-top: 4px solid #c0392b; }
+    .brand-icon { font-size: 3rem; }
+  </style>
+</head>
+<body class="d-flex align-items-center justify-content-center">
+  <div style="width:100%; max-width:420px; padding:20px;">
+
+    <!-- Logo -->
+    <div class="text-center mb-4">
+      <div class="brand-icon">⚙️</div>
+      <h3 class="fw-bold mt-2 text-white">SweetBite Bakery</h3>
+      <p style="color:#aaa;" class="mb-0">Staff / Admin Portal</p>
+    </div>
+
+    <!-- Card -->
+    <div class="card login-card shadow p-4">
+      <h5 class="fw-bold mb-3 text-center">Admin Login</h5>
+
+      <div th:if="${error}" class="alert alert-danger py-2 small" th:text="${error}"></div>
+
+      <form th:action="@{/admin-login}" method="post">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Staff Username</label>
+          <input type="text" name="username" class="form-control" placeholder="Enter staff username" required autofocus>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn btn-danger w-100 fw-bold py-2">Staff Login</button>
+      </form>
+
+      <hr class="my-3">
+      <p class="text-center mb-0 small text-muted">
+        Customer? <a th:href="@{/customer-login}" class="text-secondary">Customer Login</a>
+      </p>
+      <p class="text-center mt-2 mb-0 small text-muted">
+        Default: admin / admin123
+      </p>
+    </div>
+
+    <p class="text-center mt-3 small" style="color:#888;">
+      &copy; 2024 SweetBite Bakery - Staff Access Only
+    </p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

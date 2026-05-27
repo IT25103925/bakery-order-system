@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><title>Add Ingredient - SweetBite Bakery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{common/navbar :: navbar}"></div>
+<div class="container mt-4" style="max-width:500px;">
+    <h3 class="fw-bold mb-3">➕ Add Ingredient</h3>
+    <div class="card p-4">
+        <form th:action="@{/inventory/ingredients/add}" method="post">
+            <div class="mb-3"><label class="form-label fw-semibold">Ingredient Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. All-purpose flour" required></div>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Quantity in Stock</label>
+                    <input type="number" name="quantity" class="form-control" step="0.1" required></div>
+                <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Unit</label>
+                    <select name="unit" class="form-select">
+                        <option>kg</option><option>g</option><option>litre</option>
+                        <option>ml</option><option>pcs</option><option>dozen</option>
+                    </select></div>
+            </div>
+            <div class="mb-3"><label class="form-label fw-semibold">Reorder Level</label>
+                <input type="number" name="reorderLevel" class="form-control" step="0.1" value="10"></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Supplier</label>
+                <select name="supplierId" class="form-select">
+                    <option value="0">-- No Supplier --</option>
+                    <option th:each="s : ${suppliers}" th:value="${s.id}" th:text="${s.name}"></option>
+                </select></div>
+            <button type="submit" class="btn btn-primary fw-bold">Add Ingredient</button>
+            <a th:href="@{/inventory/dashboard}" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
